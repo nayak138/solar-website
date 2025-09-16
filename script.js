@@ -138,13 +138,32 @@ document.addEventListener("DOMContentLoaded", () => {
   // Add typing effect to hero title (optional enhancement)
   const heroTitle = document.querySelector(".hero-title")
   if (heroTitle) {
-    const text = heroTitle.innerHTML
+    const originalHTML = heroTitle.innerHTML
+    const textContent = heroTitle.textContent || heroTitle.innerText
     heroTitle.innerHTML = ""
+
+    // Create a temporary element to extract just the text for typing
+    const tempDiv = document.createElement("div")
+    tempDiv.innerHTML = originalHTML
+    const plainText = tempDiv.textContent || tempDiv.innerText
+
     let i = 0
+    let currentHTML = ""
 
     const typeWriter = () => {
-      if (i < text.length) {
-        heroTitle.innerHTML += text.charAt(i)
+      if (i < plainText.length) {
+        const char = plainText.charAt(i)
+
+        // Build the HTML progressively, preserving the span structure
+        if (i < "Power Your Future with ".length) {
+          currentHTML = plainText.substring(0, i + 1)
+        } else {
+          const beforeSpan = "Power Your Future with "
+          const spanText = plainText.substring(beforeSpan.length, i + 1)
+          currentHTML = beforeSpan + '<span class="highlight">' + spanText + "</span>"
+        }
+
+        heroTitle.innerHTML = currentHTML
         i++
         setTimeout(typeWriter, 50)
       }
